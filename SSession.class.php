@@ -78,17 +78,6 @@
         protected $_secure = false;
 
         /**
-         * _seperator
-         * 
-         * (default value: '---')
-         * 
-         * @note optional
-         * @var string
-         * @access protected
-         */
-        protected $_seperator = '---';
-
-        /**
          * __construct function.
          * 
          * @access public
@@ -97,24 +86,6 @@
         public function __construct()
         {
             $this->setHost('.' . ($_SERVER['HTTP_HOST']));
-        }
-
-        /**
-         * _getSid function. Returns the actual sid (as it relates to the
-         *    data-store) based on the cookie passed in (which is signed).
-         * 
-         * @access protected
-         * @param string $cookie
-         * @return false|string
-         */
-        protected function _getSid($cookie)
-        {
-            // grab pieces; bail if invalid format already
-            $pieces = explode($this->_seperator, $cookie);
-            if (count($pieces) !== 2) {
-                return false;
-            }
-            return $pieces[0];
         }
 
         /**
@@ -138,8 +109,7 @@
         /**
          * _sign function. Generates signature by appending the session id with
          *     a signature genatered from the id, user agent, user IP and a
-         *     secret. This signature is hashed and seperated before being
-         *     returned.
+         *     secret. This signature is hashed before being returned.
          * 
          * @access protected
          * @param string $sid
@@ -151,7 +121,7 @@
             $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
             $secret = $agent . $ip . $this->_secret;
             $signature = hash('sha256', $sid . $secret);
-            return $sid . $this->_seperator . $signature;
+            return $signature;
         }
 
         /**
@@ -171,13 +141,19 @@
             return $signature === $regenerated;
         }
 
+        /**
+         * destroy function.
+         * 
+         * @access public
+         * @return void
+         */
         public function destroy()
         {
             // empty
             $_SESSION = array();
 
             // clear cookies from agent
-            $signature = ($this->_name) . '-signature';
+            $signature = ($this->_name) . 'Signature';
             setcookie(
                 $this->_name,
                 '',
@@ -222,7 +198,7 @@
             $sid = session_id();
 
             // signature check
-            $key = ($this->_name) . '-signature';
+            $key = ($this->_name) . 'Signature';
             if (isset($_COOKIE[$key])) {
 
                 // if session id is invalid
@@ -321,18 +297,6 @@
         public function setSecured()
         {
             $this->_secure = true;
-        }
-
-        /**
-         * setSeperator function.
-         * 
-         * @access public
-         * @param string $seperator
-         * @return void
-         */
-        public function setSeperator($seperator)
-        {
-            $this->_seperator = $seperator;
         }
     }
 

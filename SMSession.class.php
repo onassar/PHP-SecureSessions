@@ -9,8 +9,8 @@
     require_once 'SSession.class.php';
 
     /**
-     * SMSession class. Extension of secure-session class that provides secured
-     *     memcached-based sessions.
+     * SMSession class. Child of SSession (secure session) class, applies
+     *     secureity functionality to memcached based sessions.
      * 
      * @extends SSession
      */
