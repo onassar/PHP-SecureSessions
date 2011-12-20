@@ -18,11 +18,11 @@
      * @example
      * <code>
      *     // instantiation
-     *     require_once APP . '/vendors/session/SMSession.class.php';
+     *     require_once APP . '/vendors/PHP-SecureSessions/SMSession.class.php';
      *     $session = (new SMSession());
      *     
      *     // config
-     *     $host = '.turtlephp.com';
+     *     $host = '.' . ($_SERVER['HTTP_HOST']);
      *     $servers = array(
      *         array('localhost', 11211)
      *     );
