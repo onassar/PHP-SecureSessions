@@ -9,15 +9,34 @@
     require_once 'SSession.class.php';
 
     /**
-     * SMSession class. Child of SSession (secure session) class, applies
-     *     secureity functionality to memcached based sessions.
-     * 
+     * SMSession class. Applies session security to memcached based sessions.
+     *
+     * @author Oliver Nassar <onassar@gmail.com>
      * @extends SSession
+     * @example
+     * <code>
+     *     // instantiation
+     *     require_once APP . '/vendors/session/SMSession.class.php';
+     *     $session = (new SMSession());
+     *     
+     *     // config
+     *     $host = '.turtlephp.com';
+     *     $servers = array(
+     *         array('localhost', 11211)
+     *     );
+     *     
+     *     // name, host and server setup; open session
+     *     $session->setName('TSMS');
+     *     $session->setHost($host);
+     *     $session->addServers($servers);
+     *     $session->open();
+     *     $GLOBALS['SMSession'] = $session;
+     * </code>
      */
     class SMSession extends SSession
     {
         /**
-         * _server
+         * _servesr
          * 
          * (default value: array())
          * 
@@ -25,7 +44,7 @@
          * @var array
          * @access protected
          */
-        protected $_server = array();
+        protected $_servers = array();
 
         /**
          * __construct function.
@@ -46,25 +65,57 @@
          */
         protected function _setup()
         {
+            // parent setup, which sets name and session cookie parameters
             parent::_setup();
-            if (empty($this->_server)) {
-                throw new Exception('Memcached server not set.');
+
+            // servers not specified; fail
+            if (empty($this->_servers)) {
+                throw new Exception('Memcached server(s) not set.');
             }
+
+            // format servers for connection
+            $parsed = array();
+            foreach ($this->_servers as $server) {
+                $formatted = implode(':', $server);
+                array_push($parsed, $formatted);
+            }
+
+            // set handler
             ini_set('session.save_handler', 'memcached');
-            ini_set('session.save_path', ($this->_server['host']) . ':' . ($this->_server['port']));
+            ini_set('session.save_path', implode(', ', $parsed));
         }
 
         /**
-         * setServer function.
+         * addServer function.
          * 
          * @access public
          * @param array $server
          * @return void
          */
-        public function setServer(array $server)
+        public function addServer(array $server)
         {
-            $this->_server = $server;
+            // check if session already opened
+            if ($this->_open === true) {
+                throw new Exception(
+                    'SMSession Error: Cannot add server after session opened.'
+                );
+            }
+
+            // push into local stack
+            array_push($this->_servers, $server);
+        }
+
+        /**
+         * addServers function.
+         * 
+         * @access public
+         * @param array $servers
+         * @return void
+         */
+        public function addServers(array $servers)
+        {
+            foreach ($servers as $server) {
+                $this->addServer($server);
+            }
         }
     }
-
-?>

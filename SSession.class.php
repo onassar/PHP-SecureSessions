@@ -3,22 +3,14 @@
     /**
      * SSession class. Secure session class.
      * 
-     * @note includes <REMOTE_ADDR> restriction in the session id signing
-     * @note includes <HTTP_USER_AGENT> restriction in the session id signing
+     * @author Oliver Nassar <onassar@gmail.com>
+     * @note includes session hijacking prevention by bounding sessions to ip
+     * addresses and user agents
      */
     class SSession
     {
         /**
-         * _host
-         * 
-         * @note optional; default value will be pulled from $_SERVER
-         * @var string
-         * @access protected
-         */
-        protected $_host;
-
-        /**
-         * _expiry
+         * _expiry.
          * 
          * @var int
          * @access protected
@@ -26,25 +18,43 @@
         protected $_expiry = 0;
 
         /**
-         * _httponly
+         * _host.
+         * 
+         * @note default value will be pulled from $_SERVER
+         * @var string
+         * @access protected
+         */
+        protected $_host;
+
+        /**
+         * _httponly.
+         * 
+         * (default value: true)
+         * 
+         * @var bool
+         * @access protected
+         */
+        protected $_httponly = true;
+
+        /**
+         * _name.
+         * 
+         * (default value: 'SN')
+         * 
+         * @var string
+         * @access protected
+         */
+        protected $_name = 'SN';
+
+        /**
+         * _open.
          * 
          * (default value: false)
          * 
          * @var bool
          * @access protected
          */
-        protected $_httponly = false;
-
-        /**
-         * _name
-         * 
-         * (default value: 'SN')
-         * 
-         * @note optional
-         * @var string
-         * @access protected
-         */
-        protected $_name = 'SN';
+        protected $_open = false;
 
         /**
          * _path
@@ -57,8 +67,8 @@
         protected $_path = '/';
 
         /**
-         * _secret. Secret used for generation the signature. Is used in
-         *     conjunction with the <REMOTE_ADDR> and <HTTP_USER_AGENT> values
+         * _secret. Secret used for generating the signature. Is used in
+         *     conjunction with the <stamp> method for securing sessions.
          * 
          * (default value: 'jkn*#j34!')
          * 
@@ -68,7 +78,7 @@
         protected $_secret = 'jkn*#j34!';
 
         /**
-         * _secure
+         * _secure.
          * 
          * (default value: false)
          * 
@@ -86,6 +96,39 @@
         public function __construct()
         {
             $this->setHost('.' . ($_SERVER['HTTP_HOST']));
+        }
+
+        /**
+         * _invalid function.
+         * 
+         * @note decoupled from <open> method to allow for logging by child
+         *     classes
+         * @access protected
+         * @return void
+         */
+        public function _invalid()
+        {
+            // reset session
+            $this->destroy();
+            $this->open();
+        }
+
+        /**
+         * _ip function. Returns the client's IP address, either directly, or
+         *     whichever was forwarded by the detected load balancer.
+         * 
+         * @access protected
+         * @return string
+         */
+        protected function _ip()
+        {
+            if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                return $_SERVER['HTTP_X_FORWARDED_FOR'];
+            }
+            if (isset($_SERVER['REMOTE_ADDR'])) {
+                return $_SERVER['REMOTE_ADDR'];
+            }
+            return '(unknown)';
         }
 
         /**
@@ -107,9 +150,9 @@
         }
 
         /**
-         * _sign function. Generates signature by appending the session id with
-         *     a signature genatered from the id, user agent, user IP and a
-         *     secret. This signature is hashed before being returned.
+         * _sign function. Generates a signature by appending the <stamp> method
+         *     response with the a secret. This signature is hashed before being
+         *     returned.
          * 
          * @access protected
          * @param string $sid
@@ -117,15 +160,27 @@
          */
         protected function _sign($sid)
         {
-            $agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-            $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
-            $secret = $agent . $ip . $this->_secret;
-            $signature = hash('sha256', $sid . $secret);
+            $stamp = $this->_stamp() . $this->_secret;
+            $signature = hash('sha256', $sid . $stamp);
             return $signature;
         }
 
         /**
-         * _validSession function. Checks whether the session is valid (eg.
+         * _stamp function. Returns a stamp to aid in securing a server, by
+         *     concatenating the user agent and IP of the client.
+         * 
+         * @note decoupled from <_sign> to allow for customizing the stamp
+         * @access protected
+         * @return string
+         */
+        protected function _stamp()
+        {
+            $agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+            return $agent . $this->_ip();
+        }
+
+        /**
+         * _valid function. Checks whether the session is valid (eg.
          *     hasn't been tampered with) by regenerating the signature and
          *     comparing it to what was passed.
          * 
@@ -134,7 +189,7 @@
          * @param string $signature
          * @return boolean
          */
-        protected function _validSession($sid, $signature)
+        protected function _valid($sid, $signature)
         {
             // return regenerated vs passed in
             $regenerated = $this->_sign($sid);
@@ -175,7 +230,7 @@
 
             /**
              * Clear out of global scope, since setcookie requires buffer flush
-             *     to update global cookie array.
+             *     to update global <_COOKIE> array.
              */
             unset($_COOKIE[$this->_name]);
             unset($_COOKIE[$signature]);
@@ -194,8 +249,13 @@
         {
             // setup session
             $this->_setup();
+
+            // open up session
             session_start();
             $sid = session_id();
+
+            // mark that a session has been opened
+            $this->_open = true;
 
             // signature check
             $key = ($this->_name) . 'Signature';
@@ -203,12 +263,11 @@
 
                 // if session id is invalid
                 $signature = $_COOKIE[$key];
-                $valid = $this->_validSession($sid, $signature);
+                $valid = $this->_valid($sid, $signature);
                 if ($valid === false) {
 
-                    // reset session
-                    $this->destroy();
-                    $this->open();
+                    // invalid session processing
+                    $this->_invalid();
                 }
             }
             // session not yet opened
@@ -299,5 +358,3 @@
             $this->_secure = true;
         }
     }
-
-?>
