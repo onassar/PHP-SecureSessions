@@ -1,11 +1,13 @@
 <?php
 
     /**
-     * SSession class. Secure session class.
+     * SSession
+     * 
+     * Secure session class.
      * 
      * @author Oliver Nassar <onassar@gmail.com>
-     * @note includes session hijacking prevention by bounding sessions to ip
-     * addresses and user agents
+     * @notes  includes session hijacking prevention by bounding sessions to ip
+     *         addresses and user agents
      */
     class SSession
     {

@@ -9,9 +9,11 @@
     require_once 'SSession.class.php';
 
     /**
-     * SMSession class. Applies session security to memcached based sessions.
+     * SMSession
      *
-     * @author Oliver Nassar <onassar@gmail.com>
+     * Applies session security to memcached based sessions.
+     * 
+     * @author  Oliver Nassar <onassar@gmail.com>
      * @extends SSession
      * @example
      * <code>
