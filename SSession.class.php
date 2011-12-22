@@ -39,6 +39,16 @@
         protected $_httponly = true;
 
         /**
+         * _lifetime.
+         * 
+         * (default value: 900)
+         * 
+         * @var integer
+         * @access protected
+         */
+        protected $_lifetime = 900;
+
+        /**
          * _name.
          * 
          * (default value: 'SN')
@@ -142,6 +152,7 @@
         protected function _setup()
         {
             ini_set('session.name', $this->_name);
+            ini_set('session.gc_maxlifetime', $this->_lifetime);
             session_set_cookie_params(
                 $this->_expiry,
                 $this->_path,
@@ -311,6 +322,18 @@
         public function setHost($host)
         {
             $this->_host = $host;
+        }
+
+        /**
+         * setLifetime function.
+         * 
+         * @access public
+         * @param string $lifetime
+         * @return void
+         */
+        public function setLifetime($lifetime)
+        {
+            $this->_lifetime = $lifetime;
         }
 
         /**
