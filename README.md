@@ -5,7 +5,7 @@ PHP-SecureSessions is a collection of two classes that facilitate session
 manipulation, in a, you guessed it, secure way.
 
 ### Secure Sessions
-A _SSession_ instance facilitates the opening of a secure session, with the
+A **SSession** instance facilitates the opening of a secure session, with the
 following features:
 
  - Key securing through secondary cookie
