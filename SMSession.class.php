@@ -38,18 +38,18 @@
     class SMSession extends SSession
     {
         /**
-         * _servesr
+         * _servers
          * 
          * (default value: array())
          * 
-         * @note required; will throw exception otherwise
-         * @var array
+         * @notes  required; will throw exception otherwise
+         * @var    array
          * @access protected
          */
         protected $_servers = array();
 
         /**
-         * __construct function.
+         * __construct
          * 
          * @access public
          * @return void
@@ -60,7 +60,7 @@
         }
 
         /**
-         * _setup function.
+         * _setup
          * 
          * @access protected
          * @return void
@@ -88,10 +88,10 @@
         }
 
         /**
-         * addServer function.
+         * addServer
          * 
          * @access public
-         * @param array $server
+         * @param  array $server
          * @return void
          */
         public function addServer(array $server)
@@ -108,10 +108,10 @@
         }
 
         /**
-         * addServers function.
+         * addServers
          * 
          * @access public
-         * @param array $servers
+         * @param  array $servers
          * @return void
          */
         public function addServers(array $servers)

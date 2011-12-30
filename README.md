@@ -19,3 +19,21 @@ done in the same way as always
 The second class acts as a child, and provides the same functionality and
 security. Added functionality includes the addition of *memcached* server
 addresses.
+
+**Sample Instantiation**
+    // instantiation
+    require_once APP . '/vendors/PHP-SecureSessions/SMSession.class.php';
+    $session = (new SMSession());
+    
+    // config
+    $host = '.' . ($_SERVER['HTTP_HOST']);
+    $servers = array(
+        array('localhost', 11211)
+    );
+    
+    // name, host and server setup; open session
+    $session->setName('TSMS');
+    $session->setHost($host);
+    $session->addServers($servers);
+    $session->open();
+    $GLOBALS['SMSession'] = $session;

@@ -12,58 +12,60 @@
     class SSession
     {
         /**
-         * _expiry.
+         * _expiry
          * 
-         * @var int
+         * (default value: 0)
+         * 
+         * @var    integer
          * @access protected
          */
         protected $_expiry = 0;
 
         /**
-         * _host.
-         * 
-         * @note default value will be pulled from $_SERVER
-         * @var string
+         * _host
+         *  
+         * @notes  default value will be pulled from <_SERVER>
+         * @var    string
          * @access protected
          */
         protected $_host;
 
         /**
-         * _httponly.
-         * 
+         * _httponly
+         *  
          * (default value: true)
          * 
-         * @var bool
+         * @var    boolean
          * @access protected
          */
         protected $_httponly = true;
 
         /**
-         * _lifetime.
-         * 
+         * _lifetime
+         *  
          * (default value: 900)
          * 
-         * @var integer
+         * @var    integer
          * @access protected
          */
         protected $_lifetime = 900;
 
         /**
-         * _name.
-         * 
+         * _name
+         *  
          * (default value: 'SN')
          * 
-         * @var string
+         * @var    string
          * @access protected
          */
         protected $_name = 'SN';
 
         /**
-         * _open.
-         * 
+         * _open
+         *  
          * (default value: false)
          * 
-         * @var bool
+         * @var    boolean
          * @access protected
          */
         protected $_open = false;
@@ -73,34 +75,36 @@
          * 
          * (default value: '/')
          * 
-         * @var string
+         * @var    string
          * @access protected
          */
         protected $_path = '/';
 
         /**
-         * _secret. Secret used for generating the signature. Is used in
-         *     conjunction with the <stamp> method for securing sessions.
+         * _secret
+         * 
+         * Secret used for generating the signature. Is used in conjunction with
+         * the <stamp> method for securing sessions.
          * 
          * (default value: 'jkn*#j34!')
          * 
-         * @var string
+         * @var    string
          * @access protected
          */
         protected $_secret = 'jkn*#j34!';
 
         /**
-         * _secure.
-         * 
+         * _secure
+         *  
          * (default value: false)
          * 
-         * @var bool
+         * @var    boolean
          * @access protected
          */
         protected $_secure = false;
 
         /**
-         * __construct function.
+         * __construct
          * 
          * @access public
          * @return void
@@ -111,10 +115,10 @@
         }
 
         /**
-         * _invalid function.
+         * _invalid
          * 
-         * @note decoupled from <open> method to allow for logging by child
-         *     classes
+         * @notes  decoupled from <open> method to allow for logging by child
+         *         classes
          * @access protected
          * @return void
          */
@@ -126,8 +130,10 @@
         }
 
         /**
-         * _ip function. Returns the client's IP address, either directly, or
-         *     whichever was forwarded by the detected load balancer.
+         * _ip
+         * 
+         * Returns the client's IP address, either directly, or whichever was
+         * forwarded by the detected load balancer.
          * 
          * @access protected
          * @return string
@@ -144,7 +150,7 @@
         }
 
         /**
-         * _setup function.
+         * _setup
          * 
          * @access protected
          * @return void
@@ -163,12 +169,13 @@
         }
 
         /**
-         * _sign function. Generates a signature by appending the <stamp> method
-         *     response with the a secret. This signature is hashed before being
-         *     returned.
+         * _sign
+         * 
+         * Generates a signature by appending the <stamp> method response with
+         * the a secret. This signature is hashed before being returned.
          * 
          * @access protected
-         * @param string $sid
+         * @param  string $sid
          * @return string
          */
         protected function _sign($sid)
@@ -179,10 +186,12 @@
         }
 
         /**
-         * _stamp function. Returns a stamp to aid in securing a server, by
-         *     concatenating the user agent and IP of the client.
+         * _stamp
          * 
-         * @note decoupled from <_sign> to allow for customizing the stamp
+         * Returns a stamp to aid in securing a server, by concatenating the
+         * user agent and IP of the client.
+         * 
+         * @notes  decoupled from <_sign> to allow for customizing the stamp
          * @access protected
          * @return string
          */
@@ -193,13 +202,14 @@
         }
 
         /**
-         * _valid function. Checks whether the session is valid (eg.
-         *     hasn't been tampered with) by regenerating the signature and
-         *     comparing it to what was passed.
+         * _valid
+         * 
+         * Checks whether the session is valid (eg. hasn't been tampered with)
+         * by regenerating the signature and comparing it to what was passed.
          * 
          * @access protected
-         * @param string $sid
-         * @param string $signature
+         * @param  string $sid
+         * @param  string $signature
          * @return boolean
          */
         protected function _valid($sid, $signature)
@@ -210,7 +220,7 @@
         }
 
         /**
-         * destroy function.
+         * destroy
          * 
          * @access public
          * @return void
@@ -243,7 +253,7 @@
 
             /**
              * Clear out of global scope, since setcookie requires buffer flush
-             *     to update global <_COOKIE> array.
+             * to update global <_COOKIE> array.
              */
             unset($_COOKIE[$this->_name]);
             unset($_COOKIE[$signature]);
@@ -253,7 +263,7 @@
         }
 
         /**
-         * open function.
+         * open
          * 
          * @access public
          * @return void
@@ -301,10 +311,10 @@
         }
 
         /**
-         * setExpiry function.
+         * setExpiry
          * 
          * @access public
-         * @param int $seconds
+         * @param  integer $seconds
          * @return void
          */
         public function setExpiry($seconds)
@@ -313,10 +323,10 @@
         }
 
         /**
-         * setHost function.
+         * setHost
          * 
          * @access public
-         * @param string $host
+         * @param  string $host
          * @return void
          */
         public function setHost($host)
@@ -325,10 +335,10 @@
         }
 
         /**
-         * setLifetime function.
+         * setLifetime
          * 
          * @access public
-         * @param string $lifetime
+         * @param  string $lifetime
          * @return void
          */
         public function setLifetime($lifetime)
@@ -337,10 +347,12 @@
         }
 
         /**
-         * setName function. Sets the name of the session (cookie-wise)
+         * setName
+         * 
+         * Sets the name of the session (cookie-wise).
          * 
          * @access public
-         * @param string $name
+         * @param  string $name
          * @return void
          */
         public function setName($name)
@@ -349,10 +361,10 @@
         }
 
         /**
-         * setPath function.
+         * setPath
          * 
          * @access public
-         * @param string $path
+         * @param  string $path
          * @return void
          */
         public function setPath($path)
@@ -361,10 +373,12 @@
         }
 
         /**
-         * setSecret function. Secret used for the hashing/signature process.
+         * setSecret
+         * 
+         * Secret used for the hashing/signature process.
          * 
          * @access public
-         * @param string $secret
+         * @param  string $secret
          * @return void
          */
         public function setSecret($secret)
@@ -373,7 +387,7 @@
         }
 
         /**
-         * setSecured function.
+         * setSecured
          * 
          * @access public
          * @return void
