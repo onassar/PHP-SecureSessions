@@ -21,6 +21,7 @@ security. Added functionality includes the addition of *memcached* server
 addresses.
 
 **Sample Instantiation**
+
     // instantiation
     require_once APP . '/vendors/PHP-SecureSessions/SMSession.class.php';
     $session = (new SMSession());
