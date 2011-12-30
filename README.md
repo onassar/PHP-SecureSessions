@@ -16,9 +16,8 @@ The manipulation of sessions remains unchanged. Writing/reading to/from them is
 done in the same way as always
 
 ### Secure Memcached Sessions
-The second class acts as a child, and provides the same functionality and
-security. Added functionality includes the addition of *memcached* server
-addresses.
+The second class acts as a child, and provides the same security. Added
+functionality includes the addition of *memcached* server addresses.
 
 **Sample Instantiation**
 
