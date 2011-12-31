@@ -1,4 +1,4 @@
-PHP Secure Sessions()
+PHP Secure Sessions
 ===
 
 PHP-SecureSessions is a collection of two classes that facilitate session
@@ -19,7 +19,7 @@ done in the same way as always
 The second class acts as a child, and provides the same security. Added
 functionality includes the addition of *memcached* server addresses.
 
-**Sample Instantiation**
+### Sample Secured Memcached Session (*SMSession*) Instantiation
 
     // instantiation
     require_once APP . '/vendors/PHP-SecureSessions/SMSession.class.php';
