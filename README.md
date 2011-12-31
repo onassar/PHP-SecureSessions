@@ -1,4 +1,4 @@
-PHP Secure Sessions
+PHP Secure Sessions()
 ===
 
 PHP-SecureSessions is a collection of two classes that facilitate session
