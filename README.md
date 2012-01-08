@@ -21,6 +21,9 @@ functionality includes the addition of *memcached* server addresses.
 
 ### Sample Secured Memcached Session (*SMSession*) Instantiation
 
+``` php
+<?php
+
     // instantiation
     require_once APP . '/vendors/PHP-SecureSessions/SMSession.class.php';
     $session = (new SMSession());
@@ -37,3 +40,5 @@ functionality includes the addition of *memcached* server addresses.
     $session->addServers($servers);
     $session->open();
     $GLOBALS['SMSession'] = $session;
+
+```
