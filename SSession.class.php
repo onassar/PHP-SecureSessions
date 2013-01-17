@@ -104,6 +104,16 @@
         protected $_secure = false;
 
         /**
+         * _secureWithIpAddress
+         *  
+         * (default value: false)
+         * 
+         * @var    boolean
+         * @access protected
+         */
+        protected $_secureWithIpAddress = false;
+
+        /**
          * __construct
          * 
          * @access public
@@ -197,8 +207,11 @@
          */
         protected function _stamp()
         {
-            $agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-            return $agent . $this->_ip();
+            $agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '(unknown)';
+            if ($this->_secureWithIpAddress === true) {
+                return $agent . $this->_ip();
+            }
+            return $agent;
         }
 
         /**
