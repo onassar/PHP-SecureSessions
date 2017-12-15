@@ -1,7 +1,7 @@
 <?php
 
     // dependecy check
-    if (!in_array('memcached', get_loaded_extensions())) {
+    if (in_array('memcached', get_loaded_extensions()) === false) {
         throw new Exception('Memcached extension needs to be installed.');
     }
 
@@ -43,16 +43,16 @@
          * (default value: array())
          * 
          * @notes  required; will throw exception otherwise
-         * @var    array
-         * @access protected
+         * @var     array
+         * @access  protected
          */
         protected $_servers = array();
 
         /**
          * __construct
          * 
-         * @access public
-         * @return void
+         * @access  public
+         * @return  void
          */
         public function __construct()
         {
@@ -62,8 +62,8 @@
         /**
          * _setup
          * 
-         * @access protected
-         * @return void
+         * @access  protected
+         * @return  void
          */
         protected function _setup()
         {
@@ -90,9 +90,9 @@
         /**
          * addServer
          * 
-         * @access public
-         * @param  array $server
-         * @return void
+         * @access  public
+         * @param   array $server
+         * @return  void
          */
         public function addServer(array $server)
         {
@@ -110,9 +110,9 @@
         /**
          * addServers
          * 
-         * @access public
-         * @param  array $servers
-         * @return void
+         * @access  public
+         * @param   array $servers
+         * @return  void
          */
         public function addServers(array $servers)
         {

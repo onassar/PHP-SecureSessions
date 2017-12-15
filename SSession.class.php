@@ -5,9 +5,9 @@
      * 
      * Secure session class.
      * 
-     * @author Oliver Nassar <onassar@gmail.com>
-     * @notes  includes session hijacking prevention by bounding sessions to ip
-     *         addresses and user agents
+     * @author  Oliver Nassar <onassar@gmail.com>
+     * @note    includes session hijacking prevention by bounding sessions to ip
+     *          addresses and user agents
      */
     class SSession
     {
@@ -16,17 +16,17 @@
          * 
          * (default value: 0)
          * 
-         * @var    integer
-         * @access protected
+         * @var     integer
+         * @access  protected
          */
         protected $_expiry = 0;
 
         /**
          * _host
          *  
-         * @notes  default value will be pulled from <_SERVER>
-         * @var    string
-         * @access protected
+         * @note    default value will be pulled from <_SERVER>
+         * @var     string
+         * @access  protected
          */
         protected $_host;
 
@@ -35,8 +35,8 @@
          *  
          * (default value: true)
          * 
-         * @var    boolean
-         * @access protected
+         * @var     boolean
+         * @access  protected
          */
         protected $_httponly = true;
 
@@ -45,8 +45,8 @@
          *  
          * (default value: 900)
          * 
-         * @var    integer
-         * @access protected
+         * @var     integer
+         * @access  protected
          */
         protected $_lifetime = 900;
 
@@ -55,8 +55,8 @@
          *  
          * (default value: 'SN')
          * 
-         * @var    string
-         * @access protected
+         * @var     string
+         * @access  protected
          */
         protected $_name = 'SN';
 
@@ -65,8 +65,8 @@
          *  
          * (default value: false)
          * 
-         * @var    boolean
-         * @access protected
+         * @var     boolean
+         * @access  protected
          */
         protected $_open = false;
 
@@ -75,8 +75,8 @@
          * 
          * (default value: '/')
          * 
-         * @var    string
-         * @access protected
+         * @var     string
+         * @access  protected
          */
         protected $_path = '/';
 
@@ -88,8 +88,8 @@
          * 
          * (default value: 'jkn*#j34!')
          * 
-         * @var    string
-         * @access protected
+         * @var     string
+         * @access  protected
          */
         protected $_secret = 'jkn*#j34!';
 
@@ -98,8 +98,8 @@
          *  
          * (default value: false)
          * 
-         * @var    boolean
-         * @access protected
+         * @var     boolean
+         * @access  protected
          */
         protected $_secure = false;
 
@@ -108,16 +108,16 @@
          *  
          * (default value: false)
          * 
-         * @var    boolean
-         * @access protected
+         * @var     boolean
+         * @access  protected
          */
         protected $_secureWithIpAddress = false;
 
         /**
          * __construct
          * 
-         * @access public
-         * @return void
+         * @access  public
+         * @return  void
          */
         public function __construct()
         {
@@ -127,10 +127,10 @@
         /**
          * _invalid
          * 
-         * @notes  decoupled from <open> method to allow for logging by child
-         *         classes
-         * @access protected
-         * @return void
+         * @note    decoupled from <open> method to allow for logging by child
+         *          classes
+         * @access  protected
+         * @return  void
          */
         public function _invalid()
         {
@@ -145,8 +145,8 @@
          * Returns the client's IP address, either directly, or whichever was
          * forwarded by the detected load balancer.
          * 
-         * @access protected
-         * @return string
+         * @access  protected
+         * @return  string
          */
         protected function _ip()
         {
@@ -162,8 +162,8 @@
         /**
          * _setup
          * 
-         * @access protected
-         * @return void
+         * @access  protected
+         * @return  void
          */
         protected function _setup()
         {
@@ -184,9 +184,9 @@
          * Generates a signature by appending the <stamp> method response with
          * the a secret. This signature is hashed before being returned.
          * 
-         * @access protected
-         * @param  string $sid
-         * @return string
+         * @access  protected
+         * @param   string $sid
+         * @return  string
          */
         protected function _sign($sid)
         {
@@ -201,9 +201,9 @@
          * Returns a stamp to aid in securing a server, by concatenating the
          * user agent and IP of the client.
          * 
-         * @notes  decoupled from <_sign> to allow for customizing the stamp
-         * @access protected
-         * @return string
+         * @note    decoupled from <_sign> to allow for customizing the stamp
+         * @access  protected
+         * @return  string
          */
         protected function _stamp()
         {
@@ -220,10 +220,10 @@
          * Checks whether the session is valid (eg. hasn't been tampered with)
          * by regenerating the signature and comparing it to what was passed.
          * 
-         * @access protected
-         * @param  string $sid
-         * @param  string $signature
-         * @return boolean
+         * @access  protected
+         * @param   string $sid
+         * @param   string $signature
+         * @return  boolean
          */
         protected function _valid($sid, $signature)
         {
@@ -235,8 +235,8 @@
         /**
          * destroy
          * 
-         * @access public
-         * @return void
+         * @access  public
+         * @return  void
          */
         public function destroy()
         {
@@ -278,8 +278,8 @@
         /**
          * open
          * 
-         * @access public
-         * @return void
+         * @access  public
+         * @return  void
          */
         public function open()
         {
@@ -326,9 +326,9 @@
         /**
          * setExpiry
          * 
-         * @access public
-         * @param  integer $seconds
-         * @return void
+         * @access  public
+         * @param   integer $seconds
+         * @return  void
          */
         public function setExpiry($seconds)
         {
@@ -338,9 +338,9 @@
         /**
          * setHost
          * 
-         * @access public
-         * @param  string $host
-         * @return void
+         * @access  public
+         * @param   string $host
+         * @return  void
          */
         public function setHost($host)
         {
@@ -350,9 +350,9 @@
         /**
          * setLifetime
          * 
-         * @access public
-         * @param  string $lifetime
-         * @return void
+         * @access  public
+         * @param   string $lifetime
+         * @return  void
          */
         public function setLifetime($lifetime)
         {
@@ -364,9 +364,9 @@
          * 
          * Sets the name of the session (cookie-wise).
          * 
-         * @access public
-         * @param  string $name
-         * @return void
+         * @access  public
+         * @param   string $name
+         * @return  void
          */
         public function setName($name)
         {
@@ -376,9 +376,9 @@
         /**
          * setPath
          * 
-         * @access public
-         * @param  string $path
-         * @return void
+         * @access  public
+         * @param   string $path
+         * @return  void
          */
         public function setPath($path)
         {
@@ -390,9 +390,9 @@
          * 
          * Secret used for the hashing/signature process.
          * 
-         * @access public
-         * @param  string $secret
-         * @return void
+         * @access  public
+         * @param   string $secret
+         * @return  void
          */
         public function setSecret($secret)
         {
@@ -402,8 +402,8 @@
         /**
          * setSecured
          * 
-         * @access public
-         * @return void
+         * @access  public
+         * @return  void
          */
         public function setSecured()
         {
