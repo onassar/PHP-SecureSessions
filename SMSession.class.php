@@ -42,7 +42,7 @@
          * 
          * (default value: array())
          * 
-         * @notes  required; will throw exception otherwise
+         * @note    required; will throw exception otherwise
          * @var     array
          * @access  protected
          */
