@@ -40,10 +40,8 @@
         /**
          * _servers
          * 
-         * (default value: array())
-         * 
          * @note    required; will throw exception otherwise
-         * @var     array
+         * @var     array (default: array())
          * @access  protected
          */
         protected $_servers = array();
