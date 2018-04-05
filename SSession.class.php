@@ -150,10 +150,10 @@
          */
         protected function _ip()
         {
-            if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) === true) {
                 return $_SERVER['HTTP_X_FORWARDED_FOR'];
             }
-            if (isset($_SERVER['REMOTE_ADDR'])) {
+            if (isset($_SERVER['REMOTE_ADDR']) === true) {
                 return $_SERVER['REMOTE_ADDR'];
             }
             return '(unknown)';
@@ -207,7 +207,7 @@
          */
         protected function _stamp()
         {
-            $agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '(unknown)';
+            $agent = isset($_SERVER['HTTP_USER_AGENT']) === true ? $_SERVER['HTTP_USER_AGENT'] : '(unknown)';
             if ($this->_secureWithIpAddress === true) {
                 return $agent . $this->_ip();
             }
@@ -295,7 +295,7 @@
 
             // signature check
             $key = ($this->_name) . 'Signature';
-            if (isset($_COOKIE[$key])) {
+            if (isset($_COOKIE[$key]) === true) {
 
                 // if session id is invalid
                 $signature = $_COOKIE[$key];
