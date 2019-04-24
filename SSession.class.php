@@ -16,8 +16,8 @@
          * 
          * (default value: 0)
          * 
-         * @var     integer
          * @access  protected
+         * @var     int
          */
         protected $_expiry = 0;
 
@@ -25,8 +25,8 @@
          * _host
          *  
          * @note    default value will be pulled from <_SERVER>
-         * @var     string
          * @access  protected
+         * @var     string
          */
         protected $_host;
 
@@ -35,8 +35,8 @@
          *  
          * (default value: true)
          * 
-         * @var     boolean
          * @access  protected
+         * @var     bool
          */
         protected $_httponly = true;
 
@@ -45,8 +45,8 @@
          *  
          * (default value: 900)
          * 
-         * @var     integer
          * @access  protected
+         * @var     int
          */
         protected $_lifetime = 900;
 
@@ -55,8 +55,8 @@
          *  
          * (default value: 'SN')
          * 
-         * @var     string
          * @access  protected
+         * @var     string
          */
         protected $_name = 'SN';
 
@@ -65,8 +65,8 @@
          *  
          * (default value: false)
          * 
-         * @var     boolean
          * @access  protected
+         * @var     bool
          */
         protected $_open = false;
 
@@ -75,8 +75,8 @@
          * 
          * (default value: '/')
          * 
-         * @var     string
          * @access  protected
+         * @var     string
          */
         protected $_path = '/';
 
@@ -88,8 +88,8 @@
          * 
          * (default value: 'jkn*#j34!')
          * 
-         * @var     string
          * @access  protected
+         * @var     string
          */
         protected $_secret = 'jkn*#j34!';
 
@@ -98,8 +98,8 @@
          *  
          * (default value: false)
          * 
-         * @var     boolean
          * @access  protected
+         * @var     bool
          */
         protected $_secure = false;
 
@@ -108,8 +108,8 @@
          *  
          * (default value: false)
          * 
-         * @var     boolean
          * @access  protected
+         * @var     bool
          */
         protected $_secureWithIPAddress = false;
 
@@ -223,7 +223,7 @@
          * @access  protected
          * @param   string $sid
          * @param   string $signature
-         * @return  boolean
+         * @return  bool
          */
         protected function _valid($sid, $signature)
         {
@@ -327,7 +327,7 @@
          * setExpiry
          * 
          * @access  public
-         * @param   integer $seconds
+         * @param   int $seconds
          * @return  void
          */
         public function setExpiry($seconds)

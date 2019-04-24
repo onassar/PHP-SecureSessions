@@ -41,8 +41,8 @@
          * _servers
          * 
          * @note    required; will throw exception otherwise
-         * @var     array (default: array())
          * @access  protected
+         * @var     array (default: array())
          */
         protected $_servers = array();
 
