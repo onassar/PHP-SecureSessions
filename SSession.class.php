@@ -132,7 +132,7 @@
          * @access  protected
          * @return  void
          */
-        public function _invalid()
+        protected function _invalid()
         {
             // reset session
             $this->destroy();
