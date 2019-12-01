@@ -63,7 +63,7 @@
          * @access  protected
          * @return  void
          */
-        protected function _setup()
+        protected function _setup(): void
         {
             // parent setup, which sets name and session cookie parameters
             parent::_setup();
@@ -92,7 +92,7 @@
          * @param   array $server
          * @return  void
          */
-        public function addServer(array $server)
+        public function addServer(array $server): void
         {
             // check if session already opened
             if ($this->_open === true) {
@@ -112,7 +112,7 @@
          * @param   array $servers
          * @return  void
          */
-        public function addServers(array $servers)
+        public function addServers(array $servers): void
         {
             foreach ($servers as $server) {
                 $this->addServer($server);

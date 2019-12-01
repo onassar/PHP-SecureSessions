@@ -132,7 +132,7 @@
          * @access  protected
          * @return  void
          */
-        protected function _invalid()
+        protected function _invalid(): void
         {
             // reset session
             $this->destroy();
@@ -165,7 +165,7 @@
          * @access  protected
          * @return  void
          */
-        protected function _setup()
+        protected function _setup(): void
         {
             ini_set('session.name', $this->_name);
             ini_set('session.gc_maxlifetime', $this->_lifetime);
@@ -238,7 +238,7 @@
          * @access  public
          * @return  void
          */
-        public function destroy()
+        public function destroy(): void
         {
             // empty
             $_SESSION = array();
@@ -281,7 +281,7 @@
          * @access  public
          * @return  void
          */
-        public function open()
+        public function open(): void
         {
             // setup session
             $this->_setup();
@@ -330,7 +330,7 @@
          * @param   int $seconds
          * @return  void
          */
-        public function setExpiry($seconds)
+        public function setExpiry($seconds): void
         {
             $this->_expiry = $seconds;
         }
@@ -342,7 +342,7 @@
          * @param   string $host
          * @return  void
          */
-        public function setHost($host)
+        public function setHost($host): void
         {
             $this->_host = $host;
         }
@@ -354,7 +354,7 @@
          * @param   string $lifetime
          * @return  void
          */
-        public function setLifetime($lifetime)
+        public function setLifetime($lifetime): void
         {
             $this->_lifetime = $lifetime;
         }
@@ -368,7 +368,7 @@
          * @param   string $name
          * @return  void
          */
-        public function setName($name)
+        public function setName($name): void
         {
             $this->_name = $name;
         }
@@ -380,7 +380,7 @@
          * @param   string $path
          * @return  void
          */
-        public function setPath($path)
+        public function setPath($path): void
         {
             $this->_path = $path;
         }
@@ -394,7 +394,7 @@
          * @param   string $secret
          * @return  void
          */
-        public function setSecret($secret)
+        public function setSecret($secret): void
         {
             $this->_secret = $secret;
         }
@@ -405,7 +405,7 @@
          * @access  public
          * @return  void
          */
-        public function setSecured()
+        public function setSecured(): void
         {
             $this->_secure = true;
         }
