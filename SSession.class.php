@@ -245,11 +245,13 @@
 
             // clear cookies from agent
             $signature = ($this->_name) . 'Signature';
+            $path = $this->_path;
+            $path = ($path) . '; samesite=none';
             setcookie(
                 $this->_name,
                 '',
                 time() - 42000,
-                $this->_path,
+                $path,
                 $this->_host,
                 $this->_secure,
                 $this->_httponly
@@ -258,7 +260,7 @@
                 $signature,
                 '',
                 time() - 42000,
-                $this->_path,
+                $path,
                 $this->_host,
                 $this->_secure,
                 $this->_httponly
@@ -311,11 +313,13 @@
 
                 // create signature-cookie
                 $signature = $this->_sign($sid);
+                $path = $this->_path;
+                $path = ($path) . '; samesite=none';
                 setcookie(
                     $key,
                     $signature,
                     $this->_expiry,
-                    $this->_path,
+                    $path,
                     $this->_host,
                     $this->_secure,
                     $this->_httponly
