@@ -169,9 +169,11 @@
         {
             ini_set('session.name', $this->_name);
             ini_set('session.gc_maxlifetime', $this->_lifetime);
+            $path = $this->_path;
+            $path = '/; samesite=none';
             session_set_cookie_params(
                 $this->_expiry,
-                $this->_path,
+                $path,
                 $this->_host,
                 $this->_secure,
                 $this->_httponly
