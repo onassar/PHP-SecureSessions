@@ -162,6 +162,8 @@
         /**
          * _setup
          * 
+         * @see     https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
+         * @see     https://dev.to/pushkaranand/upgrading-to-php-7-4-26dg
          * @access  protected
          * @return  void
          */
@@ -237,6 +239,8 @@
         /**
          * destroy
          * 
+         * @see     https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
+         * @see     https://dev.to/pushkaranand/upgrading-to-php-7-4-26dg
          * @access  public
          * @return  void
          */
@@ -282,6 +286,8 @@
         /**
          * open
          * 
+         * @see     https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
+         * @see     https://dev.to/pushkaranand/upgrading-to-php-7-4-26dg
          * @access  public
          * @return  void
          */
