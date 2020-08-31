@@ -22,25 +22,22 @@ functionality includes the addition of *memcached* server addresses.
 ### Sample Secured Memcached Session (*SMSession*) Instantiation
 
 ``` php
-<?php
+// instantiation
+require_once APP . '/vendors/PHP-SecureSessions/SMSession.class.php';
+$session = new SMSession();
 
-    // instantiation
-    require_once APP . '/vendors/PHP-SecureSessions/SMSession.class.php';
-    $session = new SMSession();
-    
-    // config
-    $host = '.' . ($_SERVER['HTTP_HOST']);
-    $servers = array(
-        array('localhost', 11211)
-    );
-    
-    // name, host and server setup; open session
-    $session->setName('TSMS');
-    $session->setHost($host);
-    $session->addServers($servers);
-    $session->open();
-    $GLOBALS['SMSession'] = $session;
+// config
+$host = '.' . ($_SERVER['HTTP_HOST']);
+$servers = array(
+    array('localhost', 11211)
+);
 
+// name, host and server setup; open session
+$session->setName('TSMS');
+$session->setHost($host);
+$session->addServers($servers);
+$session->open();
+$GLOBALS['SMSession'] = $session;
 ```
 
 ### Security Note
