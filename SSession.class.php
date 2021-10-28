@@ -12,71 +12,58 @@
     class SSession
     {
         /**
-         * _expiry
-         * 
-         * (default value: 0)
+         * _expires
          * 
          * @access  protected
-         * @var     int
+         * @var     int (default: 0)
          */
-        protected $_expiry = 0;
+        protected $_expires = 0;
 
         /**
          * _host
          *  
-         * @note    default value will be pulled from <_SERVER>
          * @access  protected
-         * @var     string
+         * @var     null|string (default: null)
          */
-        protected $_host;
+        protected $_host = null;
 
         /**
          * _httponly
-         *  
-         * (default value: true)
          * 
          * @access  protected
-         * @var     bool
+         * @var     bool (default: true)
          */
         protected $_httponly = true;
 
         /**
          * _lifetime
-         *  
-         * (default value: 900)
          * 
          * @access  protected
-         * @var     int
+         * @var     int (default: 900)
          */
         protected $_lifetime = 900;
 
         /**
          * _name
-         *  
-         * (default value: 'SN')
          * 
          * @access  protected
-         * @var     string
+         * @var     string (default: 'SN')
          */
         protected $_name = 'SN';
 
         /**
          * _open
-         *  
-         * (default value: false)
          * 
          * @access  protected
-         * @var     bool
+         * @var     bool (default: false)
          */
         protected $_open = false;
 
         /**
          * _path
          * 
-         * (default value: '/')
-         * 
          * @access  protected
-         * @var     string
+         * @var     string (default: '/')
          */
         protected $_path = '/';
 
@@ -86,30 +73,24 @@
          * Secret used for generating the signature. Is used in conjunction with
          * the <stamp> method for securing sessions.
          * 
-         * (default value: 'jkn*#j34!')
-         * 
          * @access  protected
-         * @var     string
+         * @var     string (default: 'jkn*#j34!')
          */
         protected $_secret = 'jkn*#j34!';
 
         /**
          * _secure
-         *  
-         * (default value: false)
          * 
          * @access  protected
-         * @var     bool
+         * @var     bool (default: false)
          */
         protected $_secure = false;
 
         /**
          * _secureWithIPAddress
-         *  
-         * (default value: false)
          * 
          * @access  protected
-         * @var     bool
+         * @var     bool (default: false)
          */
         protected $_secureWithIPAddress = false;
 
@@ -121,20 +102,64 @@
          */
         public function __construct()
         {
-            $this->setHost('.' . ($_SERVER['HTTP_HOST']));
+            $host = '.' . ($_SERVER['HTTP_HOST']);
+            $this->setHost($host);
         }
 
         /**
-         * _invalid
+         * _deleteCookie
+         * 
+         * @access  protected
+         * @param   string $name
+         * @return  bool
+         */
+        protected function _deleteCookie(string $name): bool
+        {
+            $value = '';
+            $expires = time() - 86400;
+            $path = $this->_path;
+            $domain = $this->_host;
+            $secure = $this->_secure;
+            $httponly = $this->_httponly;
+            $options = compact('expires', 'path', 'domain', 'secure', 'httponly');
+            $response = $this->_setCookie($name, $value, $options);
+            return $response;
+        }
+
+        /**
+         * _getSessionCookieParamsArgs
+         * 
+         * @access  protected
+         * @return  array
+         */
+        protected function _getSessionCookieParamsArgs(): array
+        {
+            $lifetime = $this->_lifetime;
+            $path = $this->_path;
+            $domain = $this->_host;
+            $secure = $this->_secure;
+            $httponly = $this->_httponly;
+            if (version_compare(PHP_VERSION, '7.3.0', '>=') === true) {
+                $samesite = 'None';
+                $options = compact('lifetime', 'path', 'domain', 'secure', 'httponly', 'samesite');
+                $args = array($options);
+                return $args;
+            }
+            $path = ($path) . '; samesite=none';
+            $args = array($lifetime, $path, $domain, $secure, $httponly);;
+            return $args;
+        }
+
+        /**
+         * _invalidate
          * 
          * @note    decoupled from <open> method to allow for logging by child
          *          classes
          * @access  protected
          * @return  void
          */
-        protected function _invalid(): void
+        protected function _invalidate(): void
         {
-            // reset session
             $this->destroy();
             $this->open();
         }
@@ -148,39 +173,59 @@
          * @access  protected
          * @return  string
          */
-        protected function _ip()
+        protected function _ip(): string
         {
-            if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) === true) {
-                return $_SERVER['HTTP_X_FORWARDED_FOR'];
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '(unknown)';
+            return $ip;
+        }
+
+        /**
+         * _setCookie
+         * 
+         * @access  public
+         * @param   string $name
+         * @param   mixed $value
+         * @param   array $options
+         * @return  bool
+         */
+        public function _setCookie(string $name, $value, array $options): bool
+        {
+            if (version_compare(PHP_VERSION, '7.3.0', '>=') === true) {
+                $options['samesite'] = 'None';
+                setcookie($name, $value, $options);
+                return true;
             }
-            if (isset($_SERVER['REMOTE_ADDR']) === true) {
-                return $_SERVER['REMOTE_ADDR'];
-            }
-            return '(unknown)';
+            $expires = $options['expires'];
+            $path = $options['path'];
+            $path = ($path) . '; samesite=none';
+            $domain = $options['domain'];
+            $secure = $options['secure'];
+            $httponly = $options['httponly'];
+            $args = array($name, $value, $expires, $domain, $secure, $httponly);
+            setcookie(... $args);
+            return true;
         }
 
         /**
          * _setup
          * 
+         * @see     https://www.php.net/manual/en/function.session-set-cookie-params.php
          * @see     https://www.php.net/manual/en/function.setcookie.php
          * @see     https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
-         * @see     https://dev.to/pushkaranand/upgrading-to-php-7-4-26dg
          * @access  protected
          * @return  void
          */
         protected function _setup(): void
         {
-            ini_set('session.name', $this->_name);
-            ini_set('session.gc_maxlifetime', $this->_lifetime);
-            $path = $this->_path;
-            $path = '/; samesite=none';
-            session_set_cookie_params(
-                $this->_expiry,
-                $path,
-                $this->_host,
-                $this->_secure,
-                $this->_httponly
-            );
+            // Runetime settings
+            $name = $this->_name;
+            $lifetime = $this->_lifetime;
+            ini_set('session.name', $name);
+            ini_set('session.gc_maxlifetime', $lifetime);
+
+            // Cookie params
+            $args = $this->_getSessionCookieParamsArgs();
+            session_set_cookie_params(... $args);
         }
 
         /**
@@ -193,7 +238,7 @@
          * @param   string $sid
          * @return  string
          */
-        protected function _sign($sid)
+        protected function _sign(string $sid): string
         {
             $stamp = $this->_stamp() . $this->_secret;
             $signature = hash('sha256', $sid . $stamp);
@@ -212,11 +257,14 @@
          */
         protected function _stamp()
         {
-            $agent = isset($_SERVER['HTTP_USER_AGENT']) === true ? $_SERVER['HTTP_USER_AGENT'] : '(unknown)';
-            if ($this->_secureWithIPAddress === true) {
-                return $agent . $this->_ip();
+            $agent = $_SERVER['HTTP_USER_AGENT'] ?? '(unknown)';
+            $stamp = $agent;
+            if ($this->_secureWithIPAddress === false) {
+                return $stamp;
             }
-            return $agent;
+            $ip = $this->_ip();
+            $stamp = ($agent) . ($ip);
+            return $stamp;
         }
 
         /**
@@ -230,11 +278,12 @@
          * @param   string $signature
          * @return  bool
          */
-        protected function _valid($sid, $signature)
+        protected function _valid(string $sid, string $signature): bool
         {
             // return regenerated vs passed in
             $regenerated = $this->_sign($sid);
-            return $signature === $regenerated;
+            $valid = $signature === $regenerated;
+            return $valid;
         }
 
         /**
@@ -242,46 +291,25 @@
          * 
          * @see     https://www.php.net/manual/en/function.setcookie.php
          * @see     https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
-         * @see     https://dev.to/pushkaranand/upgrading-to-php-7-4-26dg
          * @access  public
          * @return  void
          */
         public function destroy(): void
         {
-            // empty
+            // Clear server side session data
             $_SESSION = array();
 
-            // clear cookies from agent
-            $signature = ($this->_name) . 'Signature';
-            $path = $this->_path;
-            $path = ($path) . '; samesite=none';
-            setcookie(
-                $this->_name,
-                '',
-                time() - 42000,
-                $path,
-                $this->_host,
-                $this->_secure,
-                $this->_httponly
-            );
-            setcookie(
-                $signature,
-                '',
-                time() - 42000,
-                $path,
-                $this->_host,
-                $this->_secure,
-                $this->_httponly
-            );
+            // Delete cookies
+            $sessionCookieName = $this->_name;
+            $signatureCookieName = ($sessionCookieName) . 'Signature';
+            $this->_deleteCookie($sessionCookieName);
+            $this->_deleteCookie($signatureCookieName);
 
-            /**
-             * Clear out of global scope, since setcookie requires buffer flush
-             * to update global <_COOKIE> array.
-             */
-            unset($_COOKIE[$this->_name]);
-            unset($_COOKIE[$signature]);
+            // Clear cookies from global namespace
+            unset($_COOKIE[$sessionCookieName]);
+            unset($_COOKIE[$signatureCookieName]);
 
-            // destroy
+            // Formally destroy things
             session_destroy();
         }
 
@@ -290,52 +318,40 @@
          * 
          * @see     https://www.php.net/manual/en/function.setcookie.php
          * @see     https://stackoverflow.com/questions/39750906/php-setcookie-samesite-strict
-         * @see     https://dev.to/pushkaranand/upgrading-to-php-7-4-26dg
          * @access  public
-         * @return  void
+         * @return  bool
          */
-        public function open(): void
+        public function open(): bool
         {
-            // setup session
+            // Prepare runtime and cookie settings
             $this->_setup();
 
-            // open up session
+            // Open the session on the server
             session_start();
             $sid = session_id();
-
-            // mark that a session has been opened
             $this->_open = true;
 
-            // signature check
-            $key = ($this->_name) . 'Signature';
-            if (isset($_COOKIE[$key]) === true) {
-
-                // if session id is invalid
-                $signature = $_COOKIE[$key];
-                $valid = $this->_valid($sid, $signature);
+            // Deal with existing session
+            $signatureCookieName = ($this->_name) . 'Signature';
+            $signatureCookieValue = $_COOKIE[$signatureCookieName] ?? null;
+            if ($signatureCookieValue !== null) {
+                $valid = $this->_valid($sid, $signatureCookieValue);
                 if ($valid === false) {
-
-                    // invalid session processing
-                    $this->_invalid();
+                    $this->_invalidate();
                 }
-            }
-            // session not yet opened
-            else {
+                return true;
+            }            
 
-                // create signature-cookie
-                $signature = $this->_sign($sid);
-                $path = $this->_path;
-                $path = ($path) . '; samesite=none';
-                setcookie(
-                    $key,
-                    $signature,
-                    $this->_expiry,
-                    $path,
-                    $this->_host,
-                    $this->_secure,
-                    $this->_httponly
-                );
-            }
+            // Set the cookie
+            $value = $this->_sign($sid);
+            $expires = $this->_expires;
+            $path = $this->_path;
+            $domain = $this->_host;
+            $secure = $this->_secure;
+            $httponly = $this->_httponly;
+            $options = compact('expires', 'path', 'domain', 'secure', 'httponly');
+            $this->_setCookie($signatureCookieName, $value, $options);
+            return true;
         }
 
         /**
@@ -345,9 +361,9 @@
          * @param   int $seconds
          * @return  void
          */
-        public function setExpiry($seconds): void
+        public function setExpiry(int $seconds): void
         {
-            $this->_expiry = $seconds;
+            $this->_expires = $seconds;
         }
 
         /**
@@ -357,7 +373,7 @@
          * @param   string $host
          * @return  void
          */
-        public function setHost($host): void
+        public function setHost(string $host): void
         {
             $this->_host = $host;
         }
@@ -366,10 +382,10 @@
          * setLifetime
          * 
          * @access  public
-         * @param   string $lifetime
+         * @param   int $lifetime
          * @return  void
          */
-        public function setLifetime($lifetime): void
+        public function setLifetime(int $lifetime): void
         {
             $this->_lifetime = $lifetime;
         }
@@ -383,7 +399,7 @@
          * @param   string $name
          * @return  void
          */
-        public function setName($name): void
+        public function setName(string $name): void
         {
             $this->_name = $name;
         }
@@ -395,7 +411,7 @@
          * @param   string $path
          * @return  void
          */
-        public function setPath($path): void
+        public function setPath(string $path): void
         {
             $this->_path = $path;
         }
@@ -409,7 +425,7 @@
          * @param   string $secret
          * @return  void
          */
-        public function setSecret($secret): void
+        public function setSecret(string $secret): void
         {
             $this->_secret = $secret;
         }
