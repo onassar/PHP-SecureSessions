@@ -340,7 +340,7 @@
                     $this->_invalidate();
                 }
                 return true;
-            }            
+            }
 
             // Set the cookie
             $value = $this->_sign($sid);
